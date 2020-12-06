@@ -2,7 +2,7 @@ package timeutils
 
 import (
 	"fmt"
-	"github.com/go-lib/pkg/log"
+	"github.com/ezzuodp/go-lib/pkg/log"
 	"sort"
 	"strings"
 	"sync"
