@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/go-lib/pkg/fsutils"
-	"github.com/go-lib/pkg/log"
-	"github.com/go-lib/pkg/strutils"
-	"github.com/go-lib/pkg/timeutils"
+	"github.com/ezzuodp/go-lib/pkg/fsutils"
+	"github.com/ezzuodp/go-lib/pkg/log"
+	"github.com/ezzuodp/go-lib/pkg/strutils"
+	"github.com/ezzuodp/go-lib/pkg/timeutils"
 )
 
 func testFunc() {

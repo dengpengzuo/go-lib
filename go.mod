@@ -1,4 +1,4 @@
-module github.com/go-lib
+module github.com/ezzuodp/go-lib
 
 go 1.12
 
