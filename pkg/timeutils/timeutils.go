@@ -58,6 +58,10 @@ func (s *Stopwatch) sprintStages() string {
 	return strings.Join(stagesStrings, "\n")
 }
 
+func (s *Stopwatch) Reset() {
+	s.stages = make(map[string]time.Duration)
+}
+
 func (s *Stopwatch) PrintStages() {
 	log.Infof("%s stages:\n[%s]", s.name, s.sprintStages())
 }

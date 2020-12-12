@@ -8,10 +8,10 @@ import (
 )
 
 func testFunc() {
-	log.Debugf("infof ====> %s", "ionfo")
-	log.Warnf("infof ====> %s", "ionfo")
-	log.Infof("infof ====> %s", "ionfo")
-	log.Errorf("infof ====> %s", "ionfo")
+	log.Debugf("hello %s", "ionfo")
+	log.Warnf("hello %s", "ionfo")
+	log.Infof("hello %s", "ionfo")
+	log.Errorf("hello %s", "ionfo")
 
 	e := fsutils.WriteFile("/tmp/a.log", strutils.String2Bytes("aaaaabbbbbb\n"), true)
 	if e != nil {
@@ -24,7 +24,12 @@ func main() {
 
 	w := timeutils.NewStopwatch("test")
 	w.TrackStage("func1", testFunc)
+	w.PrintStages()
+	w.Reset()
 	w.TrackStage("func2", testFunc)
+	w.PrintStages()
+	w.Reset()
 	w.TrackStage("func3", testFunc)
 	w.PrintStages()
+	w.Reset()
 }
