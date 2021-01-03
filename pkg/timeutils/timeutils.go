@@ -11,17 +11,23 @@ import (
 
 const noStagesText = "no stages"
 
+type Option func(s *Stopwatch)
+
 type Stopwatch struct {
 	sync.Mutex
 	name   string
 	stages map[string]time.Duration
 }
 
-func NewStopwatch(name string) *Stopwatch {
-	return &Stopwatch{
+func NewStopwatch(name string, options ...Option) *Stopwatch {
+	v := &Stopwatch{
 		name:   name,
 		stages: map[string]time.Duration{},
 	}
+	for _, option := range options {
+		option(v)
+	}
+	return v
 }
 
 type stageDuration struct {
@@ -50,7 +56,7 @@ func (s *Stopwatch) sprintStages() string {
 
 	stageDurations := s.stageDurationsSorted()
 
-	stagesStrings := []string{}
+	var stagesStrings []string
 	for _, s := range stageDurations {
 		stagesStrings = append(stagesStrings, fmt.Sprintf("%s: %s", s.name, s.d))
 	}
