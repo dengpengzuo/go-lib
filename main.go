@@ -17,6 +17,9 @@ func testFunc() {
 	if e != nil {
 		log.Errorf("write file error: %v", e)
 	}
+	if _, e := fsutils.CopyFile("/tmp/a.log", "/tmp/b.log"); e != nil {
+		log.Errorf("copy file faild![%v]", e)
+	}
 }
 
 func main() {
@@ -24,11 +27,7 @@ func main() {
 
 	w := timeutils.NewStopwatch("test")
 	w.TrackStage("func1", testFunc)
-	w.PrintStages()
-	w.Reset()
 	w.TrackStage("func2", testFunc)
-	w.PrintStages()
-	w.Reset()
 	w.TrackStage("func3", testFunc)
 	w.PrintStages()
 	w.Reset()

@@ -1,6 +1,7 @@
 package fsutils
 
 import (
+	"errors"
 	"io"
 	"os"
 	"syscall"
@@ -80,6 +81,41 @@ func WriteFile(filename string, data []byte, append bool) error {
 	return err
 }
 
-func CopyRW(reader io.Reader, writer io.Writer, close bool) (uint64, error) {
-	return 0, nil
+func CopyFile(r, w string) (count int64, err error) {
+	var reader *os.File
+	var writer *os.File
+
+	if reader, err = os.OpenFile(r, os.O_RDONLY, FILE_MODE); err != nil {
+		return
+	}
+	defer reader.Close()
+
+	if writer, err = os.OpenFile(w, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, FILE_MODE); err != nil {
+		return
+	}
+	defer writer.Close()
+
+	buf := make([]byte, 8192, 8192)
+	for {
+		rn, re := reader.Read(buf[0:])
+		if rn > 0 {
+			wn, we := writer.Write(buf[0:rn])
+			if we != nil {
+				err = we
+				break
+			}
+			if rn != wn {
+				err = errors.New("short write")
+				break
+			}
+			count += int64(wn)
+		}
+		if re != nil {
+			if re != io.EOF {
+				err = re
+			}
+			break
+		}
+	}
+	return
 }
