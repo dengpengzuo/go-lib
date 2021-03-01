@@ -11,6 +11,14 @@ func NowMillis() int64 {
 	return v / int64(time.Millisecond)
 }
 
+func MillisecondToTime(v int64) time.Time {
+	return time.Unix(0, v*int64(time.Millisecond))
+}
+
+func NanosecondToTime(v int64) time.Time {
+	return time.Unix(0, v)
+}
+
 func FmtDate(t time.Time) string {
 	return t.Format("2006-01-02")
 }
