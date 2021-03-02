@@ -1,34 +1,34 @@
 package main
 
 import (
-	"github.com/ezzuodp/go-lib/pkg/fsutils"
 	"github.com/ezzuodp/go-lib/pkg/log"
-	"github.com/ezzuodp/go-lib/pkg/strutils"
-	"github.com/ezzuodp/go-lib/pkg/timeutils"
+	"github.com/ezzuodp/go-lib/pkg/web"
+	"net/http"
+	"os"
+	"time"
 )
 
-func testFunc() {
-	log.Debugf("hello %s", "ionfo")
-	log.Warnf("hello %s", "ionfo")
-	log.Infof("hello %s", "ionfo")
-	log.Errorf("hello %s", "ionfo")
-
-	e := fsutils.WriteFile("/tmp/a.log", strutils.String2Bytes("aaaaabbbbbb\n"), true)
-	if e != nil {
-		log.Errorf("write file error: %v", e)
-	}
-	if _, e := fsutils.CopyFile("/tmp/a.log", "/tmp/b.log"); e != nil {
-		log.Errorf("copy file faild![%v]", e)
-	}
-}
+const (
+	address = ":8080"
+)
 
 func main() {
 	log.InitConsoleLogger(log.DebugLevel)
 
-	w := timeutils.NewStopwatch("test")
-	w.TrackStage("func1", testFunc)
-	w.TrackStage("func2", testFunc)
-	w.TrackStage("func3", testFunc)
-	w.PrintStages()
-	w.Reset()
+	app := web.InitIris(
+		web.IrisLogger(time.RFC3339, "debug"),
+		web.IrisAccessLogger(),
+		// request router path config
+		web.IrisAddPathHandler("/debug/pprof", web.IrisDebugHandler),
+	)
+
+	server := &http.Server{
+		Addr: address,
+	}
+
+	err := web.StartServe(app, server)
+	if err != nil {
+		log.Errorf("web serve error: %v", err)
+		os.Exit(-1)
+	}
 }
