@@ -18,19 +18,19 @@ type JsonRsp struct {
 	Msg  string
 }
 
-func hello(ctx iris.Context) {
+func ping(ctx iris.Context) {
 	ctx.JSON(&JsonRsp{Code: 0, Msg: "成功"})
 }
 
 func main() {
 	log.InitConsoleLogger(log.DebugLevel)
 
-	app := web.InitIris(
-		web.IrisLogger(time.RFC3339, "debug"),
+	app := web.NewIris(
+		web.IrisLogger(time.RFC3339, "info"),
 		web.IrisAccessLogger(),
 		// request router path config
 		web.IrisAddPathHandler("/debug/pprof", web.IrisDebugHandler),
-		web.IrisGetHandler("/hello", hello),
+		web.IrisGetHandler("/ping", ping),
 	)
 
 	server := &http.Server{

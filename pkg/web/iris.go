@@ -13,10 +13,12 @@ import (
 
 type IrisOptionFunc func(*iris.Application)
 
-func InitIris(options ...IrisOptionFunc) *iris.Application {
+func NewIris(options ...IrisOptionFunc) *iris.Application {
 	app := iris.New()
-	for _, option := range options {
-		option(app)
+	if options != nil {
+		for _, option := range options {
+			option(app)
+		}
 	}
 	return app
 }
@@ -64,6 +66,13 @@ func IrisAddPathHandler(path string, options ...IrisPathPartyFunc) IrisOptionFun
 		for _, o := range options {
 			o(party)
 		}
+	}
+}
+
+// http.handlerFunc 适配
+func HttpHandlerAdapter(h http.HandlerFunc) iris.Handler {
+	return func(c iris.Context) {
+		h.ServeHTTP(c.ResponseWriter(), c.Request())
 	}
 }
 
