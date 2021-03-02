@@ -57,10 +57,22 @@ type IrisPathPartyFunc func(iris.Party)
 
 func IrisAddPathHandler(path string, options ...IrisPathPartyFunc) IrisOptionFunc {
 	return func(app *iris.Application) {
+		if path[len(path)-1] == '/' {
+			path = path[:len(path)-1]
+		}
 		party := app.Party(path)
 		for _, o := range options {
 			o(party)
 		}
+	}
+}
+
+func IrisGetHandler(path string, h iris.Handler) IrisOptionFunc {
+	return func(app *iris.Application) {
+		if path[len(path)-1] == '/' {
+			path = path[:len(path)-1]
+		}
+		app.Get(path, h)
 	}
 }
 
