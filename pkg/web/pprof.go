@@ -14,9 +14,10 @@ func innerHandler(h http.HandlerFunc) iris.Handler {
 
 func IrisDebugHandler(path iris.Party) {
 	path.Get("/index", func(c iris.Context) {
-		// iris对 /debug/pprof/ => 301 /debug/pprof
-		// 但 pprof.index 方法中判断的URL.PATH必须是 /debug/pprof/
-		c.Request().URL.Path = "/debug/pprof/"
+		// iris 对 /{prefix}/ => 301 /{prefix}
+		// {prefix}/index => {prefix}/
+		path := c.Request().URL.Path
+		c.Request().URL.Path = path[:len(path)-len("index")]
 		pprof.Index(c.ResponseWriter(), c.Request())
 	})
 	path.Get("/cmdline", innerHandler(pprof.Cmdline))
