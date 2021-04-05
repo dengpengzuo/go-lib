@@ -4,12 +4,14 @@ import (
 	"errors"
 	"io"
 	"os"
+	"path/filepath"
 	"syscall"
 )
 
 const (
-	FILE_MODE = 0644
-	DIR_MODE  = 0755
+	FILE_MODE      = 0644
+	DIR_MODE       = 0755
+	DIR_MOUNT_MODE = 0750
 )
 
 func IsDir(filename string) bool {
@@ -118,4 +120,32 @@ func CopyFile(r, w string) (count int64, err error) {
 		}
 	}
 	return
+}
+
+func RmFile(f string) error {
+	return os.Remove(f)
+}
+
+func RmDir(d string, recursive bool) error {
+	if recursive {
+		return os.RemoveAll(d)
+	} else {
+		return os.Remove(d)
+	}
+}
+
+func MvFile(o, n string) error {
+	return os.Rename(o, n)
+}
+
+func JoinPath(child ...string) string {
+	return filepath.Join(child)
+}
+
+func MountBind(src, target string) error {
+	return nil
+}
+
+func UnMount(target string) error {
+	return nil
 }
