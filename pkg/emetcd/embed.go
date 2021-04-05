@@ -8,7 +8,6 @@ replace github.com/coreos/etcd v3.3.25+incompatible => go.etcd.io/etcd v3.3.25+i
 replace google.golang.org/grpc v1.33.1 => google.golang.org/grpc v1.26.0
 */
 
-/*
 import (
 	"github.com/coreos/etcd/embed"
 )
@@ -20,4 +19,3 @@ func GenEmbedEtcd() (e *embed.Etcd, err error) {
 	e, err = embed.StartEtcd(cfg)
 	return e, err
 }
-*/
