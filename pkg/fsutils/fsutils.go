@@ -143,6 +143,7 @@ func JoinPath(child ...string) string {
 }
 
 func MountBind(src, target string) error {
+	// mount -o bind src target
 	return nil
 }
 

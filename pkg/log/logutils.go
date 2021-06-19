@@ -10,7 +10,7 @@ import (
 type Level int8
 
 const (
-	FILE_MAX_SIZE = 512 * 1024 * 1024
+	FILE_MAX_SIZE = 1024
 
 	DebugLevel Level = iota - 1
 	InfoLevel
@@ -19,21 +19,26 @@ const (
 )
 
 var logger *zap.SugaredLogger
-var log_level = zapcore.InfoLevel
+var logLevel zapcore.Level
+
+// 初始是控制台+debug模式
+func init() {
+	initConsoleLogger(DebugLevel)
+}
 
 // 输出文件和控制台
 func InitLogger(file string, level Level) {
-	logger, log_level = newZapLogger(true, file, FILE_MAX_SIZE, level)
+	logger, logLevel = newZapLogger(true, file, FILE_MAX_SIZE, level)
 }
 
 // 只输出文件
 func InitFileLogger(file string, level Level) {
-	logger, log_level = newZapLogger(false, file, FILE_MAX_SIZE, level)
+	logger, logLevel = newZapLogger(false, file, FILE_MAX_SIZE, level)
 }
 
 // 只输出控制台
-func InitConsoleLogger(level Level) {
-	logger, log_level = newZapLogger(true, "", 0, level)
+func initConsoleLogger(level Level) {
+	logger, logLevel = newZapLogger(true, "", 0, level)
 }
 
 func newZapLogger(console bool, logpath string, logfileMax int32, loglevel Level) (*zap.SugaredLogger, zapcore.Level) {
@@ -43,16 +48,14 @@ func newZapLogger(console bool, logpath string, logfileMax int32, loglevel Level
 		// lumberjack 内部有锁
 		hook := lumberjack.Logger{
 			Filename:   logpath,         // ⽇志⽂件路径
-			MaxSize:    int(logfileMax), // 1G
+			MaxSize:    int(logfileMax), // 1G(单位是MB)
 			MaxBackups: 10,              // 最多保留10个备份
 			MaxAge:     7,               // days
 			Compress:   true,            // 是否压缩
 		}
-		fw := zapcore.AddSync(&hook)
+		w := zapcore.AddSync(&hook)
 		if console {
-			w = zapcore.NewMultiWriteSyncer(os.Stdout, fw)
-		} else {
-			w = fw
+			w = zapcore.NewMultiWriteSyncer(os.Stdout, w)
 		}
 	} else if console {
 		w = zapcore.AddSync(os.Stdout)
@@ -84,25 +87,25 @@ func newZapLogger(console bool, logpath string, logfileMax int32, loglevel Level
 }
 
 func Debugf(fmt string, args ...interface{}) {
-	if log_level.Enabled(zapcore.DebugLevel) {
+	if logLevel.Enabled(zapcore.DebugLevel) {
 		logger.Debugf(fmt, args...)
 	}
 }
 
 func Infof(fmt string, args ...interface{}) {
-	if log_level.Enabled(zapcore.InfoLevel) {
+	if logLevel.Enabled(zapcore.InfoLevel) {
 		logger.Infof(fmt, args...)
 	}
 }
 
 func Warnf(fmt string, args ...interface{}) {
-	if log_level.Enabled(zapcore.WarnLevel) {
+	if logLevel.Enabled(zapcore.WarnLevel) {
 		logger.Warnf(fmt, args...)
 	}
 }
 
 func Errorf(fmt string, args ...interface{}) {
-	if log_level.Enabled(zapcore.ErrorLevel) {
+	if logLevel.Enabled(zapcore.ErrorLevel) {
 		logger.Errorf(fmt, args...)
 	}
 }
